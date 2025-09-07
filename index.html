@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PizzaHub — Multi-Branch Pizza Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0f14;           /* deep slate */
+      --card:#121826;         /* night blue */
+      --muted:#9fb1c1;        /* cool gray */
+      --text:#eaf2f9;         /* near white */
+      --brand:#ff5a3c;        /* coral */
+      --accent:#ffd166;       /* sunshine */
+      --ok:#2ecc71;           /* green */
+      --warn:#f39c12;         /* amber */
+      --danger:#e74c3c;       /* red */
+      --chip:#192233;
+      --ring: 0 0 0 3px rgba(255,90,60,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 15% -10%, rgba(255,90,60,.15), transparent 60%),
+                  radial-gradient(1200px 800px at 100% 10%, rgba(255,209,102,.12), transparent 60%),
+                  var(--bg);
+      line-height:1.4;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:1100px;margin:0 auto;padding:20px}
+    .nav{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter: blur(8px);
+      background: rgba(11,15,20,.6);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav-inner{display:flex;align-items:center;gap:14px; padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.3px}
+    .brand .logo{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:conic-gradient(from 200deg, var(--brand), var(--accent));box-shadow:0 10px 30px rgba(255,90,60,.25)}
+    .brand span{font-size:18px}
+    .nav-links{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+    .btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;background:var(--chip);color:var(--text);cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px;font-weight:600}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(0,0,0,.2)}
+    .btn.primary{background:linear-gradient(135deg,var(--brand),#ff7d4f)}
+    .btn.success{background:linear-gradient(135deg,#20bf6b,#26de81)}
+    .btn.warn{background:linear-gradient(135deg,#f39c12,#f1c40f)}
+    .btn.danger{background:linear-gradient(135deg,#e74c3c,#ff6b6b)}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.15)}
+    .pill{padding:6px 10px;border-radius:999px;font-size:12px;background:#182033;color:var(--muted);border:1px solid rgba(255,255,255,.08)}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;padding:38px 20px}
+    .hero h1{font-size:44px;line-height:1.05;margin:0 0 10px;letter-spacing:.2px}
+    .hero p{color:var(--muted);margin:0 0 16px}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+    .card.pad{padding:18px}
+    .grid{display:grid;gap:18px}
+    .g-2{grid-template-columns:repeat(2,1fr)}
+    .g-3{grid-template-columns:repeat(3,1fr)}
+    .g-4{grid-template-columns:repeat(4,1fr)}
+    .section h2{margin:0 0 10px}
+    .muted{color:var(--muted)}
+    .input{width:100%;background:#0f1523;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;color:var(--text)}
+    .input:focus{outline:none;box-shadow:var(--ring)}
+    label{font-size:12px;color:var(--muted);display:block;margin:6px 2px}
+    .field{margin-bottom:10px}
+    .list{display:grid;gap:12px}
+    .row{display:flex;gap:12px;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:14px;background:#0f1523}
+    .menu-card{display:flex;gap:14px}
+    .menu-card img{width:90px;height:90px;border-radius:14px;object-fit:cover}
+    .menu-info{flex:1}
+    .price{font-weight:800}
+    .footer{padding:30px;color:var(--muted);text-align:center}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);cursor:pointer}
+    .tab.active{background:rgba(255,90,60,.15);border-color:rgba(255,90,60,.35)}
+    .hidden{display:none!important}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .order-summary{border-top:1px dashed rgba(255,255,255,.15);margin-top:10px;padding-top:8px}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{padding:10px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+    .table th{font-weight:700;color:var(--muted)}
+    .tag{font-size:11px;padding:4px 8px;border-radius:999px;background:#1b2337;border:1px solid rgba(255,255,255,.06)}
+    .toast{position:fixed;right:18px;bottom:18px;z-index:99;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+    @media (max-width: 930px){
+      .hero{grid-template-columns:1fr}
+      .g-3{grid-template-columns:repeat(2,1fr)}
+      .g-4{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 600px){
+      .g-2,.g-3,.g-4{grid-template-columns:1fr}
+      .nav-inner{gap:8px}
+      .brand span{display:none}
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <div class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="logo">🍕</div>
+        <span>PizzaHub</span>
+        <span class="pill">Multi‑branch</span>
+      </div>
+      <div class="nav-links">
+        <a class="btn ghost" href="#home">Home</a>
+        <a class="btn ghost" href="#menu">Menu</a>
+        <a class="btn ghost" href="#order">Order</a>
+        <!-- <a class="btn ghost" href="#admin">Admin</a> -->
+        <!-- <a class="btn ghost" href="#owner">Owner</a> -->
+        <a class="btn ghost" href="#staff">Staff</a>
+        <a class="btn primary" href="#account">Account</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- HERO / HOME -->
+    <section id="home" class="section">
+      <div class="hero">
+        <div>
+          <h1>Fresh, Fast, 🔥 Wood‑Fired Goodness</h1>
+          <p>Order from your nearest branch. Crispy crusts, generous toppings, and a menu crafted by pizza lovers for pizza lovers.</p>
+          <div class="chips">
+            <div class="tag">No login needed to order</div>
+            <div class="tag">Admins manage items per branch</div>
+            <div class="tag">Owner creates branch admins</div>
+          </div>
+          <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap">
+            <a class="btn primary" href="#menu">Browse Menu</a>
+            <a class="btn" href="#order">Start Order</a>
+          </div>
+        </div>
+        <div class="card pad">
+          <h3 style="margin-top:0">Choose a Branch</h3>
+          <div class="field">
+            <label for="branchSelectHome">Nearest branch</label>
+            <select id="branchSelectHome" class="input"></select>
+          </div>
+          <div class="list" id="branchInfo"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENU -->
+    <section id="menu" class="section hidden">
+      <div class="card pad">
+        <div style="display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap">
+          <div>
+            <h2 style="margin:0">Menu</h2>
+            <div class="muted" id="menuBranchLabel">—</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <select id="branchSelectMenu" class="input"></select>
+            <input id="searchMenu" class="input" placeholder="Search pizza or description" />
+          </div>
+        </div>
+      </div>
+      <div class="grid g-3" id="menuList" style="margin-top:14px"></div>
+    </section>
+
+    <!-- ORDER -->
+    <section id="order" class="section hidden">
+      <div class="grid g-2">
+        <div class="card pad">
+          <h2 style="margin-top:0">Your Cart</h2>
+          <div id="cartList" class="list"></div>
+          <div class="order-summary">
+            <div style="display:flex;justify-content:space-between"><span>Subtotal</span><strong id="subtotal">₹0</strong></div>
+            <div style="display:flex;justify-content:space-between" class="muted"><span>Delivery</span><span id="delivery">₹40</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:18px;margin-top:6px"><span>Total</span><strong id="total">₹0</strong></div>
+          </div>
+        </div>
+        <div class="card pad">
+          <h2 style="margin-top:0">Delivery Details</h2>
+          <div class="grid g-2">
+            <div class="field"><label>Name</label><input id="custName" class="input" placeholder="Your name"/></div>
+            <div class="field"><label>Phone</label><input id="custPhone" class="input" placeholder="10-digit phone"/></div>
+          </div>
+          <div class="field"><label>Address</label><textarea id="custAddr" class="input" rows="3" placeholder="Door no, street, area, city"></textarea></div>
+          <div class="grid g-2">
+            <div class="field"><label>Branch</label><select id="branchSelectOrder" class="input"></select></div>
+            <div class="field"><label>Payment</label>
+              <select id="payment" class="input">
+                <option value="COD">Cash on Delivery</option>
+                <option value="UPI">UPI</option>
+                <option value="Card">Card on Delivery</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn primary" id="placeOrderBtn">Place Order</button>
+            <button class="btn ghost" id="saveAsAccountBtn">Interested? Create account</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad" style="margin-top:14px">
+        <h3 style="margin-top:0">Recent Orders (this device)</h3>
+        <table class="table" id="orderTable">
+          <thead><tr><th>#</th><th>When</th><th>Branch</th><th>Name</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+    
+  <!-- STAFF (Owner + Admin Combined) -->
+    <section id="staff" class="section hidden">
+      <div class="card pad">
+        <h2 style="margin-top:0">Staff Login</h2>
+        <div class="muted">Login For Owners and Branch Admins</div>
+        <div id="staffAuthArea">
+          <input id="staffUser" class="input" placeholder="Username" style="width:160px">
+          <input id="staffPass" class="input" placeholder="Password" type="password" style="width:160px">
+          <button class="btn primary" id="staffLoginBtn">Login</button>
+        </div>
+        <div id="staffLoggedArea" class="hidden" style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <span class="pill" id="staffWho"></span>
+          <button class="btn ghost" id="staffLogoutBtn">Logout</button>
+        </div>
+      </div>
+
+      <!-- OWNER PANEL -->
+      <div id="ownerPanel" class="hidden" style="margin-top:14px">
+        <div class="grid g-2">
+          <div class="card pad">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <h3 style="margin:0">Branches</h3>
+              <button class="btn success" id="addBranchBtn">+ New Branch</button>
+            </div>
+            <div id="branchListOwner" class="list" style="margin-top:10px"></div>
+          </div>
+
+          <div class="card pad">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <h3 style="margin:0">Branch Admins</h3>
+              <button class="btn success" id="addAdminBtn">+ New Admin</button>
+            </div>
+            <div id="adminListOwner" class="list" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN PANEL -->
+      <div id="adminPanel" class="hidden" style="margin-top:14px">
+        <div class="card pad">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div>
+              <h3 style="margin:0">Menu Items</h3>
+              <div class="muted" id="adminBranchLabel">—</div>
+            </div>
+            <div>
+              <button class="btn success" id="addItemBtn">+ Add Item</button>
+            </div>
+          </div>
+          <div id="adminItems" class="list" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card pad" style="margin-top:14px">
+          <h3 style="margin-top:0">Orders</h3>
+          <div class="muted">Update status: Preparing → On the way → Delivered</div>
+          <div id="adminOrders" class="list" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN (Branch Admins) -->
+    <section id="admin" class="section hidden">
+      <div class="card pad">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div>
+            <h2 style="margin:0">Branch Admin</h2>
+            <div class="muted">Manage menu items for your branch</div>
+          </div>
+          <div id="adminAuthArea">
+            <input id="adminUser" class="input" placeholder="Username" style="width:160px">
+            <input id="adminPass" class="input" placeholder="Password" type="password" style="width:160px">
+            <button class="btn primary" id="adminLoginBtn">Login</button>
+          </div>
+          <div id="adminLoggedArea" class="hidden" style="display:flex;gap:8px;align-items:center">
+            <span class="pill" id="adminWho"></span>
+            <button class="btn ghost" id="adminLogoutBtn">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminPanel" class="hidden">
+        <div class="card pad" style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div>
+              <h3 style="margin:0">Menu Items</h3>
+              <div class="muted" id="adminBranchLabel">—</div>
+            </div>
+            <div>
+              <button class="btn success" id="addItemBtn">+ Add Item</button>
+            </div>
+          </div>
+          <div id="adminItems" class="list" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card pad" style="margin-top:14px">
+          <h3 style="margin-top:0">Orders</h3>
+          <div class="muted">Update status: Preparing → On the way → Delivered</div>
+          <div id="adminOrders" class="list" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OWNER -->
+    <section id="owner" class="section hidden">
+      <div class="card pad">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div>
+            <h2 style="margin:0">Owner Console</h2>
+            <div class="muted">Create branches & branch admins</div>
+          </div>
+          <div id="ownerAuthArea">
+            <input id="ownerUser" class="input" placeholder="Username" style="width:160px">
+            <input id="ownerPass" class="input" placeholder="Password" type="password" style="width:160px">
+            <button class="btn primary" id="ownerLoginBtn">Login</button>
+          </div>
+          <div id="ownerLoggedArea" class="hidden" style="display:flex;gap:8px;align-items:center">
+            <span class="pill" id="ownerWho"></span>
+            <button class="btn ghost" id="ownerLogoutBtn">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="ownerPanel" class="hidden">
+        <div class="grid g-2" style="margin-top:14px">
+          <div class="card pad">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <h3 style="margin:0">Branches</h3>
+              <button class="btn success" id="addBranchBtn">+ New Branch</button>
+            </div>
+            <div id="branchListOwner" class="list" style="margin-top:10px"></div>
+          </div>
+
+          <div class="card pad">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <h3 style="margin:0">Branch Admins</h3>
+              <button class="btn success" id="addAdminBtn">+ New Admin</button>
+            </div>
+            <div id="adminListOwner" class="list" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCOUNT (Customers) -->
+    <section id="account" class="section hidden">
+      <div class="grid g-2">
+        <div class="card pad">
+          <h3 style="margin-top:0">Create Account</h3>
+          <div class="grid g-2">
+            <div class="field"><label>Name</label><input id="regName" class="input" placeholder="Full name"></div>
+            <div class="field"><label>Phone</label><input id="regPhone" class="input" placeholder="10-digit phone"></div>
+          </div>
+          <div class="field"><label>Address</label><textarea id="regAddr" class="input" rows="3"></textarea></div>
+          <div class="grid g-2">
+            <div class="field"><label>Username</label><input id="regUser" class="input" placeholder="username"></div>
+            <div class="field"><label>Password</label><input id="regPass" type="password" class="input" placeholder="password"></div>
+          </div>
+          <button class="btn primary" id="createAccountBtn">Create Account</button>
+        </div>
+
+        <div class="card pad">
+          <h3 style="margin-top:0">Login</h3>
+          <div class="grid g-2">
+            <div class="field"><label>Username</label><input id="loginUser" class="input"></div>
+            <div class="field"><label>Password</label><input id="loginPass" type="password" class="input"></div>
+          </div>
+          <button class="btn" id="loginBtn">Login</button>
+          <div id="accountArea" class="hidden" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">Made with ❤️ — Demo only (no backend). Data persists in your browser's localStorage.</div>
+
+  <!-- DIALOGS -->
+  <template id="itemFormTpl">
+    <div>
+      <div class="grid g-2">
+        <div class="field"><label>Title</label><input id="fTitle" class="input"/></div>
+        <div class="field"><label>Price (₹)</label><input id="fPrice" type="number" class="input"/></div>
+      </div>
+      <div class="field"><label>Description</label><textarea id="fDesc" class="input" rows="3"></textarea></div>
+      <div class="grid g-2">
+        <div class="field"><label>Image</label><input id="fImg" type="file" accept="image/*" class="input"/></div>
+        <div class="field"><label>or Image URL</label><input id="fImgUrl" class="input" placeholder="https://..."/></div>
+      </div>
+      <img id="fPreview" style="width:140px;height:140px;border-radius:14px;object-fit:cover;display:none;margin-top:6px"/>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn ghost" data-close>Cancel</button>
+        <button class="btn success" data-save>Save</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="branchFormTpl">
+    <div>
+      <div class="grid g-2">
+        <div class="field"><label>Name</label><input id="bName" class="input"/></div>
+        <div class="field"><label>Phone</label><input id="bPhone" class="input"/></div>
+      </div>
+      <div class="field"><label>Address</label><textarea id="bAddr" class="input" rows="3"></textarea></div>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn ghost" data-close>Cancel</button>
+        <button class="btn success" data-save>Save</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="adminFormTpl">
+    <div>
+      <div class="grid g-2">
+        <div class="field"><label>Name</label><input id="aName" class="input"/></div>
+        <div class="field"><label>Phone</label><input id="aPhone" class="input"/></div>
+      </div>
+      <div class="grid g-2">
+        <div class="field"><label>Username</label><input id="aUser" class="input"/></div>
+        <div class="field"><label>Password</label><input id="aPass" type="text" class="input"/></div>
+      </div>
+      <div class="field"><label>Branch</label><select id="aBranch" class="input"></select></div>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn ghost" data-close>Cancel</button>
+        <button class="btn success" data-save>Save</button>
+      </div>
+    </div>
+  </template>
+
+  <div id="modal" class="hidden" style="position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.55);z-index:50">
+    <div class="card pad" style="width:min(720px,92vw)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <strong id="modalTitle">Title</strong>
+        <button class="btn ghost" id="closeModal">✕</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    /******************* UTIL + STORE *******************/
+    const $ = (q,el=document)=>el.querySelector(q);
+    const $$ = (q,el=document)=>Array.from(el.querySelectorAll(q));
+    const uid = ()=> Math.random().toString(36).slice(2,10);
+    const fmt = n => `₹${Number(n||0).toFixed(0)}`;
+
+    const store = {
+      read(){
+        const raw = localStorage.getItem('pizzahub');
+        if(!raw){
+          const seed = seedData();
+          localStorage.setItem('pizzahub', JSON.stringify(seed));
+          return seed;
+        }
+        try { return JSON.parse(raw); } catch{ return seedData(); }
+      },
+      write(data){ localStorage.setItem('pizzahub', JSON.stringify(data)); },
+      patch(mut){ const data = this.read(); mut(data); this.write(data); return data; }
+    };
+
+    function seedData(){
+      const b1 = {id:uid(), name:'Central', phone:'080-40004000', addr:'12 MG Road, Bengaluru', items:[], orders:[]};
+      const b2 = {id:uid(), name:'HSR Layout', phone:'080-50005000', addr:'27th Main, HSR, Bengaluru', items:[], orders:[]};
+      const owner = {user:'owner', pass:'owner123', name:'The Owner'};
+      const admins = [
+        {id:uid(), name:'Ravi Kumar', phone:'9876543210', user:'ravi', pass:'ravi123', branchId:b1.id},
+        {id:uid(), name:'Anita Rao', phone:'9876500012', user:'anita', pass:'anita123', branchId:b2.id},
+      ];
+      // Sample items
+      const items = [
+        {title:'Margherita', price:249, desc:'Classic cheese & basil', img:'https://images.unsplash.com/photo-1548365328-9f547fb0950c?q=80&w=1000&auto=format&fit=crop'},
+        {title:'Farmhouse', price:329, desc:'Loaded veggies & olives', img:'https://images.unsplash.com/photo-1602605431686-d88eec211d3a?q=80&w=1000&auto=format&fit=crop'},
+        {title:'Chicken Pepperoni', price:379, desc:'Pepperoni & extra cheese', img:'https://images.unsplash.com/photo-1593504049359-74330189a345?q=80&w=1000&auto=format&fit=crop'}
+      ];
+      b1.items = items.map(x=>({...x, id:uid()}));
+      b2.items = items.map(x=>({...x, id:uid()}));
+
+      return {branches:[b1,b2], admins, owner, customers:[], sessions:{admin:null, owner:false, user:null}, cart:[], myOrders:[]};
+    }
+
+    function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'), 2200); }
+
+    /******************* ROUTER *******************/
+    const routes = ['home','menu','order','admin','owner','staff','account'];
+    function show(route){ routes.forEach(r=> $('#'+r).classList.toggle('hidden', r!==route)); location.hash = '#'+route; }
+    window.addEventListener('hashchange', ()=>{ const r=location.hash.replace('#','')||'home'; if(routes.includes(r)) show(r); renderAll(); });
+
+     /******************* STAFF LOGIN *******************/
+    function staffLogin(){
+      const u=$('#staffUser').value.trim();
+      const p=$('#staffPass').value.trim();
+      const d=store.read();
+
+      if(u===d.owner.user && p===d.owner.pass){
+        store.patch(x=> x.sessions.owner=true);
+        $('#staffAuthArea').classList.add('hidden');
+        $('#staffLoggedArea').classList.remove('hidden');
+        $('#staffWho').textContent = `Owner: ${d.owner.name}`;
+        $('#ownerPanel').classList.remove('hidden');
+        $('#adminPanel').classList.add('hidden');
+        renderOwner();
+        show('staff');
+        return;
+      }
+
+      const a = d.admins.find(x=>x.user===u && x.pass===p);
+      if(a){
+        store.patch(x=> x.sessions.admin=a.id);
+        $('#staffAuthArea').classList.add('hidden');
+        $('#staffLoggedArea').classList.remove('hidden');
+        $('#staffWho').textContent = `Admin: ${a.name}`;
+        $('#adminPanel').classList.remove('hidden');
+        $('#ownerPanel').classList.add('hidden');
+        renderAdmin();
+        show('staff');
+        return;
+      }
+
+      toast('Invalid login');
+    }
+
+    function staffLogout(){
+      store.patch(x=>{ x.sessions.admin=null; x.sessions.owner=false; });
+      $('#staffLoggedArea').classList.add('hidden');
+      $('#staffAuthArea').classList.remove('hidden');
+      $('#ownerPanel').classList.add('hidden');
+      $('#adminPanel').classList.add('hidden');
+    }
+
+    /******************* AUTO RESTORE SESSION *******************/
+    function restoreStaffSession(){
+      const d=store.read();
+      if(d.sessions.owner){
+        $('#staffAuthArea').classList.add('hidden');
+        $('#staffLoggedArea').classList.remove('hidden');
+        $('#staffWho').textContent = `Owner: ${d.owner.name}`;
+        $('#ownerPanel').classList.remove('hidden');
+        $('#adminPanel').classList.add('hidden');
+        renderOwner();
+        show('staff');
+      } else if(d.sessions.admin){
+        const a = d.admins.find(x=>x.id===d.sessions.admin);
+        if(a){
+          $('#staffAuthArea').classList.add('hidden');
+          $('#staffLoggedArea').classList.remove('hidden');
+          $('#staffWho').textContent = `Admin: ${a.name}`;
+          $('#adminPanel').classList.remove('hidden');
+          $('#ownerPanel').classList.add('hidden');
+          renderAdmin();
+          show('staff');
+        }
+      }
+    }
+
+    /******************* RENDER HELPERS *******************/
+    function renderBranchSelects(){
+      const data = store.read();
+      const opts = data.branches.map(b=>`<option value="${b.id}">${b.name}</option>`).join('');
+      ['branchSelectHome','branchSelectMenu','branchSelectOrder'].forEach(id=>{ const el = $('#'+id); if(!el) return; const current = el.value; el.innerHTML = opts; if(current) el.value=current; });
+      // Home info
+      const b = data.branches.find(x=> x.id === $('#branchSelectHome').value) || data.branches[0];
+      if(b){
+        $('#branchInfo').innerHTML = `
+          <div class="row"><div>📍 <strong>${b.name}</strong></div><div class="muted">${b.addr}</div></div>
+          <div class="row"><div>📞 ${b.phone}</div><div class="muted">Open: 11:00–23:00</div></div>`;
+      }
+      $('#menuBranchLabel').textContent = labelBranch($('#branchSelectMenu').value || data.branches[0]?.id);
+    }
+
+    function labelBranch(id){ const d=store.read(); const b=d.branches.find(x=>x.id===id); return b? `${b.name} — ${b.addr}` : '—'; }
+
+    function renderMenu(){
+      const data = store.read();
+      const bId = $('#branchSelectMenu').value || data.branches[0]?.id;
+      const branch = data.branches.find(b=> b.id===bId);
+      $('#menuBranchLabel').textContent = labelBranch(bId);
+      const q = ($('#searchMenu').value||'').toLowerCase();
+      const list = (branch?.items||[]).filter(i => [i.title,i.desc].join(' ').toLowerCase().includes(q));
+      $('#menuList').innerHTML = list.map(i=>`
+        <div class="card pad menu-card">
+          <img src="${i.img}" alt="${i.title}">
+          <div class="menu-info">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:700">${i.title}</div>
+                <div class="muted" style="font-size:13px">${i.desc}</div>
+              </div>
+              <div class="price">${fmt(i.price)}</div>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button class="btn" onclick="addToCart('${branch.id}','${i.id}')">Add</button>
+            </div>
+          </div>
+        </div>
+      `).join('') || '<div class="muted">No items found.</div>';
+    }
+
+    function addToCart(branchId,itemId){
+      store.patch(d=>{
+        const branch=d.branches.find(b=>b.id===branchId);
+        const item=branch.items.find(i=>i.id===itemId);
+        const existing = d.cart.find(c=>c.item.id===itemId && c.branchId===branchId);
+        if(existing) existing.qty++; else d.cart.push({id:uid(), branchId, item, qty:1});
+      });
+      toast('Added to cart');
+      renderCart();
+      show('order');
+    }
+
+    function renderCart(){
+      const d = store.read();
+      const delivery = 40;
+      let subtotal = 0;
+      $('#cartList').innerHTML = d.cart.map(c=>{
+        subtotal += c.item.price * c.qty;
+        return `
+          <div class="row">
+            <div style="display:flex;gap:10px;align-items:center">
+              <img src="${c.item.img}" style="width:60px;height:60px;border-radius:10px;object-fit:cover"/>
+              <div><div style="font-weight:700">${c.item.title}</div><div class="muted">${fmt(c.item.price)}</div></div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button class="btn" onclick="chgQty('${c.id}',-1)">−</button>
+              <span class="pill">${c.qty}</span>
+              <button class="btn" onclick="chgQty('${c.id}',1)">+</button>
+              <button class="btn danger" onclick="rmCart('${c.id}')">Remove</button>
+            </div>
+          </div>`
+      }).join('') || '<div class="muted">Your cart is empty.</div>';
+      $('#subtotal').textContent = fmt(subtotal);
+      $('#delivery').textContent = fmt(d.cart.length?delivery:0);
+      $('#total').textContent = fmt(subtotal + (d.cart.length?delivery:0));
+      // order table
+      const tbody = $('#orderTable tbody');
+      tbody.innerHTML = d.myOrders.map((o,i)=>{
+        const br = d.branches.find(b=>b.id===o.branchId);
+        return `<tr><td>${i+1}</td><td>${new Date(o.ts).toLocaleString()}</td><td>${br?.name||'-'}</td><td>${o.name}</td><td>${fmt(o.total)}</td><td><span class="tag">${o.status}</span></td></tr>`
+      }).join('');
+    }
+
+    function chgQty(id,delta){
+      store.patch(d=>{
+        const c=d.cart.find(x=>x.id===id); if(!c) return; c.qty += delta; if(c.qty<=0) d.cart = d.cart.filter(x=>x.id!==id);
+      });
+      renderCart();
+    }
+    function rmCart(id){ store.patch(d=> d.cart = d.cart.filter(x=>x.id!==id)); renderCart(); }
+
+    function placeOrder(){
+      const d = store.read();
+      if(!d.cart.length) return toast('Cart is empty');
+      const name=$('#custName').value.trim();
+      const phone=$('#custPhone').value.trim();
+      const addr=$('#custAddr').value.trim();
+      const branchId=$('#branchSelectOrder').value || d.branches[0]?.id;
+      if(!name||!phone||!addr) return toast('Fill name, phone, address');
+      const total = d.cart.reduce((s,c)=> s + c.item.price*c.qty, 0) + 40;
+      const order = {id:uid(), ts:Date.now(), name, phone, addr, items:d.cart, total, status:'Placed', branchId, payment:$('#payment').value};
+      store.patch(x=>{
+        x.myOrders.unshift(order);
+        const br=x.branches.find(b=>b.id===branchId); br.orders.unshift({...order});
+        x.cart=[];
+      });
+      renderCart();
+      toast('Order placed!');
+    }
+
+    /******************* OWNER *******************/
+    function ownerLogin(){
+      const u=$('#ownerUser').value.trim(); const p=$('#ownerPass').value.trim();
+      const d=store.read();
+      if(u===d.owner.user && p===d.owner.pass){
+        store.patch(x=> x.sessions.owner=true);
+        $('#ownerAuthArea').classList.add('hidden');
+        $('#ownerLoggedArea').classList.remove('hidden');
+        $('#ownerWho').textContent = `Owner: ${d.owner.name}`;
+        $('#ownerPanel').classList.remove('hidden');
+        renderOwner();
+      } else toast('Invalid owner login');
+    }
+    function ownerLogout(){ store.patch(x=>x.sessions.owner=false); $('#ownerLoggedArea').classList.add('hidden'); $('#ownerAuthArea').classList.remove('hidden'); $('#ownerPanel').classList.add('hidden'); }
+
+    function renderOwner(){
+      const d=store.read();
+      // branches
+      $('#branchListOwner').innerHTML = d.branches.map(b=>`
+        <div class="row">
+          <div>
+            <div style="font-weight:700">${b.name}</div>
+            <div class="muted" style="font-size:13px">${b.addr} · ${b.phone}</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="editBranch('${b.id}')">Edit</button>
+            <button class="btn danger" onclick="delBranch('${b.id}')">Delete</button>
+          </div>
+        </div>`).join('') || '<div class="muted">No branches</div>';
+      // admins
+      $('#adminListOwner').innerHTML = d.admins.map(a=>{
+        const br=d.branches.find(b=>b.id===a.branchId);
+        return `<div class="row">
+          <div>
+            <div style="font-weight:700">
+              ${a.name} 
+              <span class="tag">user: ${a.user}</span>
+              <span class="tag">pass: ${a.pass}</span>
+            </div>
+            <div class="muted" style="font-size:13px">${a.phone} · ${br?.name||'—'}</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="editAdmin('${a.id}')">Edit</button>
+            <button class="btn danger" onclick="delAdmin('${a.id}')">Delete</button>
+          </div>
+        </div>`
+      }).join('') || '<div class="muted">No admins</div>';
+    }
+
+    function openModal(title, bodyEl, onSave){
+      $('#modalTitle').textContent = title;
+      const body = $('#modalBody');
+      body.innerHTML=''; body.appendChild(bodyEl);
+      $('#modal').classList.remove('hidden');
+      const btnSave = body.querySelector('[data-save]');
+      const btnClose = body.querySelector('[data-close]');
+      const close=()=>$('#modal').classList.add('hidden');
+      $('#closeModal').onclick=close; btnClose.onclick=close;
+      btnSave.onclick=async()=>{ await onSave?.(); close(); };
+    }
+
+    function addBranch(){
+      const tpl = document.importNode($('#branchFormTpl').content,true);
+      openModal('New Branch', tpl, ()=>{
+        const name=$('#bName').value.trim(); const phone=$('#bPhone').value.trim(); const addr=$('#bAddr').value.trim();
+        if(!name||!phone||!addr) return toast('Fill all fields');
+        store.patch(d=> d.branches.push({id:uid(), name, phone, addr, items:[], orders:[]}));
+        renderBranchSelects(); renderOwner();
+        toast('Branch added');
+      });
+    }
+
+    function editBranch(id){
+      const d=store.read(); const b=d.branches.find(x=>x.id===id);
+      const tpl = document.importNode($('#branchFormTpl').content,true);
+      tpl.querySelector('#bName').value=b.name; tpl.querySelector('#bPhone').value=b.phone; tpl.querySelector('#bAddr').value=b.addr;
+      openModal('Edit Branch', tpl, ()=>{
+        store.patch(x=>{ const t=x.branches.find(z=>z.id===id); t.name=$('#bName').value.trim(); t.phone=$('#bPhone').value.trim(); t.addr=$('#bAddr').value.trim(); });
+        renderBranchSelects(); renderOwner(); toast('Branch updated');
+      });
+    }
+
+    function delBranch(id){
+      store.patch(d=>{ d.branches = d.branches.filter(b=>b.id!==id); d.admins = d.admins.filter(a=>a.branchId!==id); });
+      renderBranchSelects(); renderOwner(); toast('Branch deleted');
+    }
+
+    function addAdmin(){
+      const tpl = document.importNode($('#adminFormTpl').content,true);
+      // fill branches
+      const d=store.read();
+      const sel = tpl.querySelector('#aBranch');
+      sel.innerHTML = d.branches.map(b=>`<option value="${b.id}">${b.name}</option>`).join('');
+      openModal('New Branch Admin', tpl, ()=>{
+        const name=$('#aName').value.trim(), phone=$('#aPhone').value.trim(), user=$('#aUser').value.trim(), pass=$('#aPass').value.trim(), branchId=$('#aBranch').value;
+        if(!name||!phone||!user||!pass) return toast('Fill all fields');
+        store.patch(x=> x.admins.push({id:uid(), name, phone, user, pass, branchId}));
+        renderOwner(); toast('Admin created');
+      });
+    }
+
+    function editAdmin(id){
+      const d=store.read(); const a=d.admins.find(x=>x.id===id);
+      const tpl = document.importNode($('#adminFormTpl').content,true);
+      tpl.querySelector('#aName').value=a.name; tpl.querySelector('#aPhone').value=a.phone; tpl.querySelector('#aUser').value=a.user; tpl.querySelector('#aPass').value=a.pass;
+      const sel = tpl.querySelector('#aBranch'); sel.innerHTML=d.branches.map(b=>`<option value="${b.id}">${b.name}</option>`).join(''); sel.value=a.branchId;
+      openModal('Edit Admin', tpl, ()=>{
+        store.patch(x=>{ const t=x.admins.find(z=>z.id===id); t.name=$('#aName').value.trim(); t.phone=$('#aPhone').value.trim(); t.user=$('#aUser').value.trim(); t.pass=$('#aPass').value.trim(); t.branchId=$('#aBranch').value; });
+        renderOwner(); toast('Admin updated');
+      });
+    }
+
+    function delAdmin(id){ store.patch(d=> d.admins = d.admins.filter(a=>a.id!==id)); renderOwner(); toast('Admin deleted'); }
+
+    /******************* ADMIN (Branch) *******************/
+    function adminLogin(){
+      const u=$('#adminUser').value.trim(); const p=$('#adminPass').value.trim();
+      const d=store.read();
+      const a=d.admins.find(x=>x.user===u && x.pass===p);
+      if(a){
+        store.patch(x=> x.sessions.admin=a.id);
+        $('#adminAuthArea').classList.add('hidden');
+        $('#adminLoggedArea').classList.remove('hidden');
+        $('#adminWho').textContent = `Admin: ${a.name}`;
+        $('#adminPanel').classList.remove('hidden');
+        renderAdmin();
+      } else toast('Invalid admin login');
+    }
+    function adminLogout(){ store.patch(x=>x.sessions.admin=null); $('#adminLoggedArea').classList.add('hidden'); $('#adminAuthArea').classList.remove('hidden'); $('#adminPanel').classList.add('hidden'); }
+
+    function renderAdmin(){
+      const d=store.read();
+      const a = d.admins.find(x=>x.id===d.sessions.admin); if(!a) return;
+      const br = d.branches.find(b=>b.id===a.branchId);
+      $('#adminBranchLabel').textContent = labelBranch(br.id);
+      // items
+      $('#adminItems').innerHTML = br.items.map(it=>`
+        <div class="row">
+          <div style="display:flex;gap:10px;align-items:center">
+            <img src="${it.img}" style="width:60px;height:60px;border-radius:10px;object-fit:cover"/>
+            <div>
+              <div style="font-weight:700">${it.title} <span class="muted">— ${fmt(it.price)}</span></div>
+              <div class="muted" style="font-size:13px">${it.desc}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="editItem('${br.id}','${it.id}')">Edit</button>
+            <button class="btn danger" onclick="delItem('${br.id}','${it.id}')">Delete</button>
+          </div>
+        </div>`).join('') || '<div class="muted">No items</div>';
+
+      // orders
+      $('#adminOrders').innerHTML = br.orders.map(o=>`
+        <div class="row">
+          <div>
+            <div style="font-weight:700">${o.name} <span class="muted">(${o.phone})</span></div>
+            <div class="muted" style="font-size:13px">${o.items.length} items · ${fmt(o.total)}</div>
+            <div class="chips" style="margin-top:6px">
+              ${o.items.slice(0,3).map(c=>`<span class="tag">${c.item.title}×${c.qty}</span>`).join('')} ${o.items.length>3?`<span class="tag">+${o.items.length-3} more</span>`:''}
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="pill">${o.status}</span>
+            <button class="btn" onclick="advanceStatus('${br.id}','${o.id}')">Next</button>
+            <button class="btn danger" onclick="cancelOrder('${br.id}','${o.id}')">Cancel</button>
+          </div>
+        </div>`).join('') || '<div class="muted">No orders yet</div>';
+    }
+
+    function advanceStatus(branchId, orderId){
+      const steps=['Placed','Preparing','On the way','Delivered'];
+      store.patch(d=>{
+        const br=d.branches.find(b=>b.id===branchId);
+        const o=br.orders.find(x=>x.id===orderId);
+        const i=steps.indexOf(o.status); o.status = steps[Math.min(i+1, steps.length-1)];
+      });
+      renderAdmin(); toast('Status updated');
+    }
+    function cancelOrder(branchId, orderId){ store.patch(d=>{ const br=d.branches.find(b=>b.id===branchId); br.orders = br.orders.filter(o=>o.id!==orderId); }); renderAdmin(); toast('Order cancelled'); }
+
+    function addItem(){
+      const d=store.read(); const a=d.admins.find(x=>x.id===d.sessions.admin); const br=d.branches.find(b=>b.id===a.branchId);
+      const tpl = document.importNode($('#itemFormTpl').content,true);
+      const imgI = tpl.querySelector('#fImg'); const imgUrlI = tpl.querySelector('#fImgUrl'); const prev = tpl.querySelector('#fPreview');
+      const showPrev=(src)=>{ if(src){ prev.src=src; prev.style.display='block'; } else prev.style.display='none'; };
+      imgI.onchange=()=>{ const f=imgI.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>showPrev(e.target.result); r.readAsDataURL(f); };
+      imgUrlI.oninput=()=> showPrev(imgUrlI.value.trim());
+      openModal('Add Item', tpl, ()=>{
+        const title=$('#fTitle').value.trim(); const price=+$('#fPrice').value; const desc=$('#fDesc').value.trim();
+        const img = prev.src || 'https://images.unsplash.com/photo-1548365328-9f547fb0950c?q=80&w=1000&auto=format&fit=crop';
+        if(!title||!price||!desc) return toast('Fill all fields');
+        store.patch(x=>{ const b=x.branches.find(z=>z.id===br.id); b.items.push({id:uid(), title, price, desc, img}); });
+        renderAdmin(); renderMenu(); toast('Item added');
+      });
+    }
+
+    function editItem(branchId,itemId){
+      const d=store.read(); const br=d.branches.find(b=>b.id===branchId); const it=br.items.find(i=>i.id===itemId);
+      const tpl = document.importNode($('#itemFormTpl').content,true);
+      tpl.querySelector('#fTitle').value=it.title; tpl.querySelector('#fPrice').value=it.price; tpl.querySelector('#fDesc').value=it.desc;
+      const imgI = tpl.querySelector('#fImg'); const imgUrlI = tpl.querySelector('#fImgUrl'); const prev = tpl.querySelector('#fPreview'); prev.src=it.img; prev.style.display='block';
+      imgI.onchange=()=>{ const f=imgI.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>{ prev.src=e.target.result; prev.style.display='block'; }; r.readAsDataURL(f); };
+      imgUrlI.oninput=()=>{ prev.src=imgUrlI.value.trim(); prev.style.display='block'; };
+      openModal('Edit Item', tpl, ()=>{
+        store.patch(x=>{ const b=x.branches.find(z=>z.id===branchId); const t=b.items.find(k=>k.id===itemId); t.title=$('#fTitle').value.trim(); t.price=+$('#fPrice').value; t.desc=$('#fDesc').value.trim(); t.img=prev.src; });
+        renderAdmin(); renderMenu(); toast('Item updated');
+      });
+    }
+
+    function delItem(branchId,itemId){ store.patch(d=>{ const br=d.branches.find(b=>b.id===branchId); br.items = br.items.filter(i=>i.id!==itemId); }); renderAdmin(); renderMenu(); toast('Item deleted'); }
+
+    /******************* CUSTOMER ACCOUNTS *******************/
+    function createAccount(prefill){
+      const name=(prefill?.name)||$('#regName').value.trim();
+      const phone=(prefill?.phone)||$('#regPhone').value.trim();
+      const addr=(prefill?.addr)||$('#regAddr').value.trim();
+      const user=(prefill?.user)||$('#regUser').value.trim();
+      const pass=(prefill?.pass)||$('#regPass').value.trim();
+      if(!name||!phone||!addr||!user||!pass) return toast('Fill all fields');
+      store.patch(d=>{
+        if(d.customers.find(c=>c.user===user)) return toast('Username already exists');
+        d.customers.push({id:uid(), name, phone, addr, user, pass});
+        d.sessions.user=user;
+      });
+      renderAccount(); toast('Account created');
+    }
+
+    function login(role) {
+      const user = $(`#${role}User`).value.trim();
+      const pass = $(`#${role}Pass`).value.trim();
+      const d = store.read();
+
+      if (role === "owner" && user === d.owner.user && pass === d.owner.pass) {
+        store.patch(x => x.sessions.owner = true);
+        toggleLoginUI(role, true, d.owner.name);
+      } else if (role === "admin") {
+        const a = d.admins.find(x => x.user === user && x.pass === pass);
+        if (a) {
+          store.patch(x => x.sessions.admin = a.id);
+          toggleLoginUI(role, true, a.name);
+        } else toast("Invalid admin login");
+      }
+    }
+
+    // function login(){
+    //   const u=$('#loginUser').value.trim(); const p=$('#loginPass').value.trim();
+    //   const d=store.read(); const c=d.customers.find(x=>x.user===u && x.pass===p);
+    //   if(c){ store.patch(x=> x.sessions.user=u); renderAccount(); toast('Logged in'); }
+    //   else toast('Invalid login');
+    // }
+    function logout(){ store.patch(x=> x.sessions.user=null); renderAccount(); toast('Logged out'); }
+
+    // function renderMenuItem(branchId, item) {
+    //   return `
+    //     <div class="card pad menu-card">
+    //       <img src="${item.img}" alt="${item.title}">
+    //       <div class="menu-info">
+    //         <div style="display:flex;justify-content:space-between;align-items:center">
+    //           <div>
+    //             <div style="font-weight:700">${item.title}</div>
+    //             <div class="muted" style="font-size:13px">${item.desc}</div>
+    //           </div>
+    //           <div class="price">${fmt(item.price)}</div>
+    //         </div>
+    //         <div style="margin-top:8px;display:flex;gap:8px">
+    //           <button class="btn" onclick="addToCart('${branchId}','${item.id}')">Add</button>
+    //         </div>
+    //       </div>
+    //     </div>`;
+    // }
+
+  //   $('#menuList').innerHTML = list.map(i => renderMenuItem(branch.id, i)).join('') 
+  // || '<div class="muted">No items found.</div>';
+
+
+    function renderAccount(){
+      const d=store.read();
+      const area = $('#accountArea');
+      if(!d.sessions.user){ area.classList.add('hidden'); return; }
+      const c = d.customers.find(x=>x.user===d.sessions.user);
+      area.classList.remove('hidden');
+      area.innerHTML = `
+        <div class="row">
+          <div>
+            <div style="font-weight:700">${c.name} <span class="tag">@${c.user}</span></div>
+            <div class="muted" style="font-size:13px">${c.phone} · ${c.addr}</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="prefillFromAccount()">Use for Order</button>
+            <button class="btn ghost" onclick="logout()">Logout</button>
+          </div>
+        </div>`;
+    }
+
+    function prefillFromAccount(){
+      const d=store.read(); const c=d.customers.find(x=>x.user===d.sessions.user); if(!c) return;
+      $('#custName').value=c.name; $('#custPhone').value=c.phone; $('#custAddr').value=c.addr; toast('Filled from your account'); show('order');
+    }
+
+    function saveAsAccountFromOrder(){
+      const name=$('#custName').value.trim(); const phone=$('#custPhone').value.trim(); const addr=$('#custAddr').value.trim();
+      if(!name||!phone||!addr) return toast('Fill name, phone, address first');
+      const user = name.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,10) + Math.floor(Math.random()*90+10);
+      const pass = Math.random().toString(36).slice(2,8);
+      $('#regName').value=name; $('#regPhone').value=phone; $('#regAddr').value=addr; $('#regUser').value=user; $('#regPass').value=pass;
+      show('account'); toast('We suggested a username/password — you can change them.');
+    }
+
+    /******************* WIRE EVENTS + INITIAL RENDER *******************/
+    function renderAll(){ renderBranchSelects(); renderMenu(); renderCart(); renderAccount(); }
+
+    // events
+    $('#branchSelectHome').addEventListener('change', renderBranchSelects);
+    $('#branchSelectMenu').addEventListener('change', renderMenu);
+    $('#searchMenu').addEventListener('input', renderMenu);
+    $('#placeOrderBtn').addEventListener('click', placeOrder);
+    $('#saveAsAccountBtn').addEventListener('click', saveAsAccountFromOrder);
+    $('#branchSelectOrder').addEventListener('change', ()=>{});
+
+
+    // Staff
+    $('#staffLoginBtn').addEventListener('click', staffLogin);
+    $('#staffLogoutBtn').addEventListener('click', staffLogout);
+    $('#ownerLoginBtn').addEventListener('click', ()=>login('owner'));
+    $('#adminLoginBtn').addEventListener('click', ()=>login('admin'));
+    $('#staffLoginBtn').addEventListener('click', ()=>login('staff'));
+
+
+    // Owner
+    $('#ownerLoginBtn').addEventListener('click', ownerLogin);
+    $('#ownerLogoutBtn').addEventListener('click', ownerLogout);
+    $('#addBranchBtn').addEventListener('click', addBranch);
+    $('#addAdminBtn').addEventListener('click', addAdmin);
+
+    // Admin
+    $('#adminLoginBtn').addEventListener('click', adminLogin);
+    $('#adminLogoutBtn').addEventListener('click', adminLogout);
+    $('#addItemBtn').addEventListener('click', addItem);
+
+    // Accounts
+    $('#createAccountBtn').addEventListener('click', ()=>createAccount());
+    $('#loginBtn').addEventListener('click', login);
+
+    // Modal
+    $('#modal').addEventListener('click', (e)=>{ if(e.target.id==='modal') $('#modal').classList.add('hidden'); });
+
+    // Expose some functions to global (used in HTML onclick)
+    window.addToCart = addToCart;
+    window.chgQty = chgQty;
+    window.rmCart = rmCart;
+    window.advanceStatus = advanceStatus;
+    window.cancelOrder = cancelOrder;
+    window.editItem = editItem;
+    window.delItem = delItem;
+    window.editBranch = editBranch;
+    window.delBranch = delBranch;
+    window.editAdmin = editAdmin;
+    window.delAdmin = delAdmin;
+
+    // boot
+    (function init(){
+      const r=location.hash.replace('#','')||'home';
+      if(!routes.includes(r)) location.hash = '#home';
+      show(r);
+      renderAll();
+      restoreStaffSession();
+    })();
+  </script>
+</body>
+</html>
