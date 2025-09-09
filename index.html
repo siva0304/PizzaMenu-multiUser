@@ -99,7 +99,6 @@
   </style>
 </head>
 <body>
-  <!-- NAV -->
   <div class="nav">
     <div class="container nav-inner">
       <div class="brand">
@@ -111,16 +110,12 @@
         <a class="btn ghost" href="#home">Home</a>
         <a class="btn ghost" href="#menu">Menu</a>
         <a class="btn ghost" href="#order">Order</a>
-        <!-- <a class="btn ghost" href="#admin">Admin</a> -->
-        <!-- <a class="btn ghost" href="#owner">Owner</a> -->
         <a class="btn ghost" href="#staff">Staff</a>
-        <a class="btn primary" href="#account">Account</a>
       </div>
     </div>
   </div>
 
   <main class="container">
-    <!-- HERO / HOME -->
     <section id="home" class="section">
       <div class="hero">
         <div>
@@ -147,7 +142,6 @@
       </div>
     </section>
 
-    <!-- MENU -->
     <section id="menu" class="section hidden">
       <div class="card pad">
         <div style="display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap">
@@ -164,7 +158,6 @@
       <div class="grid g-3" id="menuList" style="margin-top:14px"></div>
     </section>
 
-    <!-- ORDER -->
     <section id="order" class="section hidden">
       <div class="grid g-2">
         <div class="card pad">
@@ -209,8 +202,7 @@
       </div>
     </section>
     
-  <!-- STAFF (Owner + Admin Combined) -->
-    <section id="staff" class="section hidden">
+  <section id="staff" class="section hidden">
       <div class="card pad">
         <h2 style="margin-top:0">Staff Login</h2>
         <div class="muted">Login For Owners and Branch Admins</div>
@@ -225,7 +217,6 @@
         </div>
       </div>
 
-      <!-- OWNER PANEL -->
       <div id="ownerPanel" class="hidden" style="margin-top:14px">
         <div class="grid g-2">
           <div class="card pad">
@@ -246,7 +237,6 @@
         </div>
       </div>
 
-      <!-- ADMIN PANEL -->
       <div id="adminPanel" class="hidden" style="margin-top:14px">
         <div class="card pad">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
@@ -267,115 +257,36 @@
           <div id="adminOrders" class="list" style="margin-top:10px"></div>
         </div>
       </div>
-    </section>
 
-    <!-- ADMIN (Branch Admins) -->
-    <section id="admin" class="section hidden">
+      <div id="customerPanel" class="hidden" style="margin-top:14px">
       <div class="card pad">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-          <div>
-            <h2 style="margin:0">Branch Admin</h2>
-            <div class="muted">Manage menu items for your branch</div>
-          </div>
-          <div id="adminAuthArea">
-            <input id="adminUser" class="input" placeholder="Username" style="width:160px">
-            <input id="adminPass" class="input" placeholder="Password" type="password" style="width:160px">
-            <button class="btn primary" id="adminLoginBtn">Login</button>
-          </div>
-          <div id="adminLoggedArea" class="hidden" style="display:flex;gap:8px;align-items:center">
-            <span class="pill" id="adminWho"></span>
-            <button class="btn ghost" id="adminLogoutBtn">Logout</button>
-          </div>
-        </div>
+        <h3 style="margin-top:0">Your Orders</h3>
+        <div id="customerOrders" class="list" style="margin-top:10px"></div>
       </div>
+    </div>
 
-      <div id="adminPanel" class="hidden">
-        <div class="card pad" style="margin-top:14px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-            <div>
-              <h3 style="margin:0">Menu Items</h3>
-              <div class="muted" id="adminBranchLabel">—</div>
-            </div>
-            <div>
-              <button class="btn success" id="addItemBtn">+ Add Item</button>
-            </div>
+    <div class="card pad">
+          <h3 style="margin-top:0">Create New Account</h3>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <button class="btn" id="toggleRegBtn">Register Now</button>
+            <button class="btn ghost hidden" id="closeRegBtn">✕</button>
           </div>
-          <div id="adminItems" class="list" style="margin-top:10px"></div>
+          <div id="regFormArea" class="hidden" style="margin-top:10px">
+            <div class="grid g-2">
+              <div class="field"><label>Name</label><input id="regName" class="input" placeholder="Full name"></div>
+              <div class="field"><label>Phone</label><input id="regPhone" class="input" placeholder="10-digit phone"></div>
+            </div>
+            <div class="field"><label>Address</label><textarea id="regAddr" class="input" rows="3"></textarea></div>
+            <div class="grid g-2">
+              <div class="field"><label>Username</label><input id="regUser" class="input" placeholder="username"></div>
+              <div class="field"><label>Password</label><input id="regPass" type="password" class="input" placeholder="password"></div>
+            </div>
+            <button class="btn primary" id="createAccountBtn">Create Account</button>
+          </div>
         </div>
 
-        <div class="card pad" style="margin-top:14px">
-          <h3 style="margin-top:0">Orders</h3>
-          <div class="muted">Update status: Preparing → On the way → Delivered</div>
-          <div id="adminOrders" class="list" style="margin-top:10px"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- OWNER -->
-    <section id="owner" class="section hidden">
-      <div class="card pad">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-          <div>
-            <h2 style="margin:0">Owner Console</h2>
-            <div class="muted">Create branches & branch admins</div>
-          </div>
-          <div id="ownerAuthArea">
-            <input id="ownerUser" class="input" placeholder="Username" style="width:160px">
-            <input id="ownerPass" class="input" placeholder="Password" type="password" style="width:160px">
-            <button class="btn primary" id="ownerLoginBtn">Login</button>
-          </div>
-          <div id="ownerLoggedArea" class="hidden" style="display:flex;gap:8px;align-items:center">
-            <span class="pill" id="ownerWho"></span>
-            <button class="btn ghost" id="ownerLogoutBtn">Logout</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="ownerPanel" class="hidden">
-        <div class="grid g-2" style="margin-top:14px">
-          <div class="card pad">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-              <h3 style="margin:0">Branches</h3>
-              <button class="btn success" id="addBranchBtn">+ New Branch</button>
-            </div>
-            <div id="branchListOwner" class="list" style="margin-top:10px"></div>
-          </div>
-
-          <div class="card pad">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-              <h3 style="margin:0">Branch Admins</h3>
-              <button class="btn success" id="addAdminBtn">+ New Admin</button>
-            </div>
-            <div id="adminListOwner" class="list" style="margin-top:10px"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ACCOUNT (Customers) -->
-    <section id="account" class="section hidden">
-      <div class="grid g-2">
+      <div id="account" class="section hidden">
         <div class="card pad">
-          <h3 style="margin-top:0">Create Account</h3>
-          <div class="grid g-2">
-            <div class="field"><label>Name</label><input id="regName" class="input" placeholder="Full name"></div>
-            <div class="field"><label>Phone</label><input id="regPhone" class="input" placeholder="10-digit phone"></div>
-          </div>
-          <div class="field"><label>Address</label><textarea id="regAddr" class="input" rows="3"></textarea></div>
-          <div class="grid g-2">
-            <div class="field"><label>Username</label><input id="regUser" class="input" placeholder="username"></div>
-            <div class="field"><label>Password</label><input id="regPass" type="password" class="input" placeholder="password"></div>
-          </div>
-          <button class="btn primary" id="createAccountBtn">Create Account</button>
-        </div>
-
-        <div class="card pad">
-          <h3 style="margin-top:0">Login</h3>
-          <div class="grid g-2">
-            <div class="field"><label>Username</label><input id="loginUser" class="input"></div>
-            <div class="field"><label>Password</label><input id="loginPass" type="password" class="input"></div>
-          </div>
-          <button class="btn" id="loginBtn">Login</button>
           <div id="accountArea" class="hidden" style="margin-top:10px"></div>
         </div>
       </div>
@@ -384,7 +295,6 @@
 
   <div class="footer">Made with ❤️ — Demo only (no backend). Data persists in your browser's localStorage.</div>
 
-  <!-- DIALOGS -->
   <template id="itemFormTpl">
     <div>
       <div class="grid g-2">
@@ -448,6 +358,8 @@
 
   <div id="toast" class="toast hidden"></div>
 
+  <script src="firebase.html"></script>
+
   <script>
     /******************* UTIL + STORE *******************/
     const $ = (q,el=document)=>el.querySelector(q);
@@ -456,17 +368,14 @@
     const fmt = n => `₹${Number(n||0).toFixed(0)}`;
 
     const store = {
-      read(){
-        const raw = localStorage.getItem('pizzahub');
-        if(!raw){
-          const seed = seedData();
-          localStorage.setItem('pizzahub', JSON.stringify(seed));
-          return seed;
-        }
-        try { return JSON.parse(raw); } catch{ return seedData(); }
+      read() {
+        const data = localStorage.getItem('pizzahub');
+        if (!data) return this.write(seedData());
+        try { return JSON.parse(data); } 
+        catch(e) { console.error(e); return this.write(seedData()); }
       },
-      write(data){ localStorage.setItem('pizzahub', JSON.stringify(data)); },
-      patch(mut){ const data = this.read(); mut(data); this.write(data); return data; }
+      write(data) { localStorage.setItem('pizzahub', JSON.stringify(data)); return data; },
+      patch(mut) { const data = this.read(); mut(data); return this.write(data); }
     };
 
     function seedData(){
@@ -485,23 +394,27 @@
       ];
       b1.items = items.map(x=>({...x, id:uid()}));
       b2.items = items.map(x=>({...x, id:uid()}));
+      
+      const customers = [{id:uid(), name:'Test User', phone:'9999999999', addr:'123 Test St, Test City', user:'test', pass:'test123'}];
 
-      return {branches:[b1,b2], admins, owner, customers:[], sessions:{admin:null, owner:false, user:null}, cart:[], myOrders:[]};
+      return {branches:[b1,b2], admins, owner, customers, sessions:{admin:null, owner:false, user:null}, cart:[], myOrders:[]};
     }
 
     function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'), 2200); }
 
     /******************* ROUTER *******************/
-    const routes = ['home','menu','order','admin','owner','staff','account'];
+    const routes = ['home', 'menu', 'order', 'staff'];
     function show(route){ routes.forEach(r=> $('#'+r).classList.toggle('hidden', r!==route)); location.hash = '#'+route; }
     window.addEventListener('hashchange', ()=>{ const r=location.hash.replace('#','')||'home'; if(routes.includes(r)) show(r); renderAll(); });
+    document.addEventListener('DOMContentLoaded', () => { const route = location.hash.replace('#', '') || 'home'; show(route); });
 
-     /******************* STAFF LOGIN *******************/
-    function staffLogin(){
-      const u=$('#staffUser').value.trim();
-      const p=$('#staffPass').value.trim();
-      const d=store.read();
-
+    /******************* LOGIN (Merged) *******************/
+    function login(username, password){
+      const u = username.trim();
+      const p = password.trim();
+      const d = store.read();
+      
+      // Try to log in as Owner
       if(u===d.owner.user && p===d.owner.pass){
         store.patch(x=> x.sessions.owner=true);
         $('#staffAuthArea').classList.add('hidden');
@@ -511,9 +424,11 @@
         $('#adminPanel').classList.add('hidden');
         renderOwner();
         show('staff');
+        toast('Logged in successfully!');
         return;
       }
 
+      // Try to log in as Admin
       const a = d.admins.find(x=>x.user===u && x.pass===p);
       if(a){
         store.patch(x=> x.sessions.admin=a.id);
@@ -524,19 +439,48 @@
         $('#ownerPanel').classList.add('hidden');
         renderAdmin();
         show('staff');
+        toast('Logged in successfully!');
         return;
       }
-
+      
+     // Try to log in as Customer
+    const c = d.customers.find(x=>x.user===u && x.pass===p);
+    if(c){
+      store.patch(x=> x.sessions.user=u);
+      $('#staffAuthArea').classList.add('hidden');
+      $('#staffLoggedArea').classList.remove('hidden');
+      $('#staffWho').innerHTML = `
+        Customer: ${c.name}
+        <div class="muted" style="font-size:13px">${c.phone} · ${c.addr}</div>
+      `;
+      $('#ownerPanel').classList.add('hidden');
+      $('#adminPanel').classList.add('hidden');
+      renderAccount();
+      renderCustomerOrders();
+      prefillFromAccount();   // auto fill delivery details
+      show('staff');
+      toast('Logged in successfully!');
+      return;
+    }
+      
       toast('Invalid login');
     }
 
     function staffLogout(){
-      store.patch(x=>{ x.sessions.admin=null; x.sessions.owner=false; });
+      store.patch(x=>{
+        x.sessions.admin = null;
+        x.sessions.owner = false;
+        x.sessions.user = null;
+      });
       $('#staffLoggedArea').classList.add('hidden');
       $('#staffAuthArea').classList.remove('hidden');
       $('#ownerPanel').classList.add('hidden');
       $('#adminPanel').classList.add('hidden');
+      $('#customerPanel').classList.add('hidden');
+      renderAccount();
     }
+
+    function logout(){ store.patch(x=> x.sessions.user=null); renderAccount(); toast('Logged out'); }
 
     /******************* AUTO RESTORE SESSION *******************/
     function restoreStaffSession(){
@@ -548,7 +492,6 @@
         $('#ownerPanel').classList.remove('hidden');
         $('#adminPanel').classList.add('hidden');
         renderOwner();
-        show('staff');
       } else if(d.sessions.admin){
         const a = d.admins.find(x=>x.id===d.sessions.admin);
         if(a){
@@ -558,7 +501,6 @@
           $('#adminPanel').classList.remove('hidden');
           $('#ownerPanel').classList.add('hidden');
           renderAdmin();
-          show('staff');
         }
       }
     }
@@ -567,7 +509,15 @@
     function renderBranchSelects(){
       const data = store.read();
       const opts = data.branches.map(b=>`<option value="${b.id}">${b.name}</option>`).join('');
-      ['branchSelectHome','branchSelectMenu','branchSelectOrder'].forEach(id=>{ const el = $('#'+id); if(!el) return; const current = el.value; el.innerHTML = opts; if(current) el.value=current; });
+      ['branchSelectHome','branchSelectMenu','branchSelectOrder'].forEach(id=>{
+        const el = $('#'+id);
+        if(!el) return;
+        const current = el.value;
+        el.innerHTML = opts;
+        if(current) el.value=current;
+        else el.value = data.branches[0]?.id;  // Explicitly select first branch
+      });
+
       // Home info
       const b = data.branches.find(x=> x.id === $('#branchSelectHome').value) || data.branches[0];
       if(b){
@@ -575,7 +525,10 @@
           <div class="row"><div>📍 <strong>${b.name}</strong></div><div class="muted">${b.addr}</div></div>
           <div class="row"><div>📞 ${b.phone}</div><div class="muted">Open: 11:00–23:00</div></div>`;
       }
+
       $('#menuBranchLabel').textContent = labelBranch($('#branchSelectMenu').value || data.branches[0]?.id);
+      
+      renderMenu();  // Ensure menu is rendered immediately with selected branch
     }
 
     function labelBranch(id){ const d=store.read(); const b=d.branches.find(x=>x.id===id); return b? `${b.name} — ${b.addr}` : '—'; }
@@ -606,48 +559,70 @@
       `).join('') || '<div class="muted">No items found.</div>';
     }
 
-    function addToCart(branchId,itemId){
-      store.patch(d=>{
-        const branch=d.branches.find(b=>b.id===branchId);
-        const item=branch.items.find(i=>i.id===itemId);
-        const existing = d.cart.find(c=>c.item.id===itemId && c.branchId===branchId);
-        if(existing) existing.qty++; else d.cart.push({id:uid(), branchId, item, qty:1});
-      });
-      toast('Added to cart');
-      renderCart();
-      show('order');
-    }
+    function addToCart(branchId, itemId){
+  const userId = 'unique_user_id';
+  const cartRef = window.firebaseDb.collection('carts').doc(userId);
 
-    function renderCart(){
-      const d = store.read();
-      const delivery = 40;
-      let subtotal = 0;
-      $('#cartList').innerHTML = d.cart.map(c=>{
-        subtotal += c.item.price * c.qty;
-        return `
-          <div class="row">
-            <div style="display:flex;gap:10px;align-items:center">
-              <img src="${c.item.img}" style="width:60px;height:60px;border-radius:10px;object-fit:cover"/>
-              <div><div style="font-weight:700">${c.item.title}</div><div class="muted">${fmt(c.item.price)}</div></div>
-            </div>
-            <div style="display:flex;gap:6px;align-items:center">
-              <button class="btn" onclick="chgQty('${c.id}',-1)">−</button>
-              <span class="pill">${c.qty}</span>
-              <button class="btn" onclick="chgQty('${c.id}',1)">+</button>
-              <button class="btn danger" onclick="rmCart('${c.id}')">Remove</button>
-            </div>
-          </div>`
-      }).join('') || '<div class="muted">Your cart is empty.</div>';
-      $('#subtotal').textContent = fmt(subtotal);
-      $('#delivery').textContent = fmt(d.cart.length?delivery:0);
-      $('#total').textContent = fmt(subtotal + (d.cart.length?delivery:0));
-      // order table
-      const tbody = $('#orderTable tbody');
-      tbody.innerHTML = d.myOrders.map((o,i)=>{
-        const br = d.branches.find(b=>b.id===o.branchId);
-        return `<tr><td>${i+1}</td><td>${new Date(o.ts).toLocaleString()}</td><td>${br?.name||'-'}</td><td>${o.name}</td><td>${fmt(o.total)}</td><td><span class="tag">${o.status}</span></td></tr>`
-      }).join('');
+  cartRef.get().then(doc => {
+    let cart = doc.exists ? doc.data().items : [];
+    const existing = cart.find(c => c.itemId === itemId && c.branchId === branchId);
+    if(existing) {
+      existing.qty++;
+    } else {
+      cart.push({branchId, itemId, qty:1});
     }
+    cartRef.set({items: cart});
+    toast('Added to cart (Realtime)');
+    renderCartRealtime();
+  });
+}
+
+function renderCustomerOrders(){
+  const d = store.read();
+  if(!d.sessions.user) return;
+  const c = d.customers.find(x=>x.user===d.sessions.user);
+  if(!c) return;
+
+  const myOrders = d.myOrders.filter(o => o.phone === c.phone);
+  $('#customerPanel').classList.remove('hidden');
+  $('#customerOrders').innerHTML = myOrders.map(o=>{
+    return `
+      <div class="row">
+        <div>
+          <div style="font-weight:700">${o.name} <span class="muted">(${o.phone})</span></div>
+          <div class="muted" style="font-size:13px">${o.items.length} items · ${fmt(o.total)} · ${new Date(o.ts).toLocaleString()}</div>
+          <div class="chips" style="margin-top:6px">
+            ${o.items.slice(0,3).map(c=>`<span class="tag">${c.item.title}×${c.qty}</span>`).join('')}
+            ${o.items.length>3?`<span class="tag">+${o.items.length-3} more</span>`:''}
+          </div>
+        </div>
+        <div><span class="pill">${o.status}</span></div>
+      </div>
+    `;
+  }).join('') || '<div class="muted">No orders yet.</div>';
+}
+
+function renderCartRealtime(){
+  const userId = 'unique_user_id';
+  const cartRef = window.firebaseDb.collection('carts').doc(userId);
+
+  cartRef.onSnapshot(doc => {
+    const cart = doc.exists ? doc.data().items : [];
+    let subtotal = 0;
+    document.getElementById('cartList').innerHTML = cart.map(c => {
+      subtotal += (c.qty * 100); // Replace with actual item price lookup logic if needed
+      return `
+        <div class="row">
+          <div>Branch: ${c.branchId} | Item: ${c.itemId} | Qty: ${c.qty}</div>
+        </div>
+      `;
+    }).join('') || '<div class="muted">Your cart is empty.</div>';
+
+    document.getElementById('subtotal').textContent = `₹${subtotal}`;
+    document.getElementById('delivery').textContent = `₹${cart.length ? 40 : 0}`;
+    document.getElementById('total').textContent = `₹${subtotal + (cart.length ? 40 : 0)}`;
+  });
+}
 
     function chgQty(id,delta){
       store.patch(d=>{
@@ -658,39 +633,34 @@
     function rmCart(id){ store.patch(d=> d.cart = d.cart.filter(x=>x.id!==id)); renderCart(); }
 
     function placeOrder(){
-      const d = store.read();
-      if(!d.cart.length) return toast('Cart is empty');
-      const name=$('#custName').value.trim();
-      const phone=$('#custPhone').value.trim();
-      const addr=$('#custAddr').value.trim();
-      const branchId=$('#branchSelectOrder').value || d.branches[0]?.id;
-      if(!name||!phone||!addr) return toast('Fill name, phone, address');
-      const total = d.cart.reduce((s,c)=> s + c.item.price*c.qty, 0) + 40;
-      const order = {id:uid(), ts:Date.now(), name, phone, addr, items:d.cart, total, status:'Placed', branchId, payment:$('#payment').value};
-      store.patch(x=>{
-        x.myOrders.unshift(order);
-        const br=x.branches.find(b=>b.id===branchId); br.orders.unshift({...order});
-        x.cart=[];
-      });
-      renderCart();
-      toast('Order placed!');
-    }
+  const userId = 'unique_user_id';
+  const ordersRef = window.firebaseDb.collection('orders');
+  const cartRef = window.firebaseDb.collection('carts').doc(userId);
+
+  cartRef.get().then(doc => {
+    if(!doc.exists || doc.data().items.length === 0) return toast('Cart is empty');
+
+    const order = {
+      id: uid(),
+      ts: Date.now(),
+      name: document.getElementById('custName').value.trim(),
+      phone: document.getElementById('custPhone').value.trim(),
+      addr: document.getElementById('custAddr').value.trim(),
+      items: doc.data().items,
+      total: 40 + doc.data().items.reduce((sum,c)=> sum + (c.qty * 100), 0),
+      status: 'Placed',
+      branchId: document.getElementById('branchSelectOrder').value,
+      payment: document.getElementById('payment').value
+    };
+
+    ordersRef.add(order).then(() => {
+      cartRef.set({items: []});
+      toast('Order placed successfully');
+    });
+  });
+}
 
     /******************* OWNER *******************/
-    function ownerLogin(){
-      const u=$('#ownerUser').value.trim(); const p=$('#ownerPass').value.trim();
-      const d=store.read();
-      if(u===d.owner.user && p===d.owner.pass){
-        store.patch(x=> x.sessions.owner=true);
-        $('#ownerAuthArea').classList.add('hidden');
-        $('#ownerLoggedArea').classList.remove('hidden');
-        $('#ownerWho').textContent = `Owner: ${d.owner.name}`;
-        $('#ownerPanel').classList.remove('hidden');
-        renderOwner();
-      } else toast('Invalid owner login');
-    }
-    function ownerLogout(){ store.patch(x=>x.sessions.owner=false); $('#ownerLoggedArea').classList.add('hidden'); $('#ownerAuthArea').classList.remove('hidden'); $('#ownerPanel').classList.add('hidden'); }
-
     function renderOwner(){
       const d=store.read();
       // branches
@@ -758,11 +728,6 @@
       });
     }
 
-    function delBranch(id){
-      store.patch(d=>{ d.branches = d.branches.filter(b=>b.id!==id); d.admins = d.admins.filter(a=>a.branchId!==id); });
-      renderBranchSelects(); renderOwner(); toast('Branch deleted');
-    }
-
     function addAdmin(){
       const tpl = document.importNode($('#adminFormTpl').content,true);
       // fill branches
@@ -788,24 +753,18 @@
       });
     }
 
-    function delAdmin(id){ store.patch(d=> d.admins = d.admins.filter(a=>a.id!==id)); renderOwner(); toast('Admin deleted'); }
+    // Refactored delete functions to be more generic.
+    function delBranch(id) {
+        deleteEntity('branches', id, renderOwner, 'Branch deleted');
+        // Since deleting a branch also deletes admins, we re-render the select
+        renderBranchSelects();
+    }
+    
+    function delAdmin(id) {
+        deleteEntity('admins', id, renderOwner, 'Admin deleted');
+    }
 
     /******************* ADMIN (Branch) *******************/
-    function adminLogin(){
-      const u=$('#adminUser').value.trim(); const p=$('#adminPass').value.trim();
-      const d=store.read();
-      const a=d.admins.find(x=>x.user===u && x.pass===p);
-      if(a){
-        store.patch(x=> x.sessions.admin=a.id);
-        $('#adminAuthArea').classList.add('hidden');
-        $('#adminLoggedArea').classList.remove('hidden');
-        $('#adminWho').textContent = `Admin: ${a.name}`;
-        $('#adminPanel').classList.remove('hidden');
-        renderAdmin();
-      } else toast('Invalid admin login');
-    }
-    function adminLogout(){ store.patch(x=>x.sessions.admin=null); $('#adminLoggedArea').classList.add('hidden'); $('#adminAuthArea').classList.remove('hidden'); $('#adminPanel').classList.add('hidden'); }
-
     function renderAdmin(){
       const d=store.read();
       const a = d.admins.find(x=>x.id===d.sessions.admin); if(!a) return;
@@ -884,8 +843,30 @@
         renderAdmin(); renderMenu(); toast('Item updated');
       });
     }
-
-    function delItem(branchId,itemId){ store.patch(d=>{ const br=d.branches.find(b=>b.id===branchId); br.items = br.items.filter(i=>i.id!==itemId); }); renderAdmin(); renderMenu(); toast('Item deleted'); }
+    
+    // Generic function to delete entities from the store
+    function deleteEntity(entityType, id, renderFunction, successMessage) {
+        store.patch(d => {
+            if (entityType === 'branches') {
+                d.admins = d.admins.filter(admin => admin.branchId !== id);
+            }
+            d[entityType] = d[entityType].filter(item => item.id !== id);
+        });
+        renderFunction();
+        toast(successMessage);
+    }
+    
+    function delItem(branchId, itemId) {
+        store.patch(d => {
+            const branch = d.branches.find(b => b.id === branchId);
+            if (branch) {
+                branch.items = branch.items.filter(i => i.id !== itemId);
+            }
+        });
+        renderAdmin();
+        renderMenu();
+        toast('Item deleted');
+    }
 
     /******************* CUSTOMER ACCOUNTS *******************/
     function createAccount(prefill){
@@ -902,54 +883,6 @@
       });
       renderAccount(); toast('Account created');
     }
-
-    function login(role) {
-      const user = $(`#${role}User`).value.trim();
-      const pass = $(`#${role}Pass`).value.trim();
-      const d = store.read();
-
-      if (role === "owner" && user === d.owner.user && pass === d.owner.pass) {
-        store.patch(x => x.sessions.owner = true);
-        toggleLoginUI(role, true, d.owner.name);
-      } else if (role === "admin") {
-        const a = d.admins.find(x => x.user === user && x.pass === pass);
-        if (a) {
-          store.patch(x => x.sessions.admin = a.id);
-          toggleLoginUI(role, true, a.name);
-        } else toast("Invalid admin login");
-      }
-    }
-
-    // function login(){
-    //   const u=$('#loginUser').value.trim(); const p=$('#loginPass').value.trim();
-    //   const d=store.read(); const c=d.customers.find(x=>x.user===u && x.pass===p);
-    //   if(c){ store.patch(x=> x.sessions.user=u); renderAccount(); toast('Logged in'); }
-    //   else toast('Invalid login');
-    // }
-    function logout(){ store.patch(x=> x.sessions.user=null); renderAccount(); toast('Logged out'); }
-
-    // function renderMenuItem(branchId, item) {
-    //   return `
-    //     <div class="card pad menu-card">
-    //       <img src="${item.img}" alt="${item.title}">
-    //       <div class="menu-info">
-    //         <div style="display:flex;justify-content:space-between;align-items:center">
-    //           <div>
-    //             <div style="font-weight:700">${item.title}</div>
-    //             <div class="muted" style="font-size:13px">${item.desc}</div>
-    //           </div>
-    //           <div class="price">${fmt(item.price)}</div>
-    //         </div>
-    //         <div style="margin-top:8px;display:flex;gap:8px">
-    //           <button class="btn" onclick="addToCart('${branchId}','${item.id}')">Add</button>
-    //         </div>
-    //       </div>
-    //     </div>`;
-    // }
-
-  //   $('#menuList').innerHTML = list.map(i => renderMenuItem(branch.id, i)).join('') 
-  // || '<div class="muted">No items found.</div>';
-
 
     function renderAccount(){
       const d=store.read();
@@ -994,30 +927,32 @@
     $('#placeOrderBtn').addEventListener('click', placeOrder);
     $('#saveAsAccountBtn').addEventListener('click', saveAsAccountFromOrder);
     $('#branchSelectOrder').addEventListener('change', ()=>{});
+    $('#toggleRegBtn').addEventListener('click', () => {
+        const form = $('#regFormArea');
+        const closeBtn = $('#closeRegBtn');
+        form.classList.toggle('hidden');
+        closeBtn.classList.toggle('hidden');
+    });
+    $('#closeRegBtn').addEventListener('click', () => {
+        const form = $('#regFormArea');
+        const closeBtn = $('#closeRegBtn');
+        form.classList.add('hidden');
+        closeBtn.classList.add('hidden');
+    });
 
-
-    // Staff
-    $('#staffLoginBtn').addEventListener('click', staffLogin);
+    // Login calls the new unified function
+    $('#staffLoginBtn').addEventListener('click', () => login($('#staffUser').value, $('#staffPass').value));
     $('#staffLogoutBtn').addEventListener('click', staffLogout);
-    $('#ownerLoginBtn').addEventListener('click', ()=>login('owner'));
-    $('#adminLoginBtn').addEventListener('click', ()=>login('admin'));
-    $('#staffLoginBtn').addEventListener('click', ()=>login('staff'));
-
-
+    
     // Owner
-    $('#ownerLoginBtn').addEventListener('click', ownerLogin);
-    $('#ownerLogoutBtn').addEventListener('click', ownerLogout);
     $('#addBranchBtn').addEventListener('click', addBranch);
     $('#addAdminBtn').addEventListener('click', addAdmin);
 
     // Admin
-    $('#adminLoginBtn').addEventListener('click', adminLogin);
-    $('#adminLogoutBtn').addEventListener('click', adminLogout);
     $('#addItemBtn').addEventListener('click', addItem);
 
     // Accounts
     $('#createAccountBtn').addEventListener('click', ()=>createAccount());
-    $('#loginBtn').addEventListener('click', login);
 
     // Modal
     $('#modal').addEventListener('click', (e)=>{ if(e.target.id==='modal') $('#modal').classList.add('hidden'); });
@@ -1043,6 +978,10 @@
       renderAll();
       restoreStaffSession();
     })();
+
+    document.getElementById('placeOrderBtn').addEventListener('click', placeOrder);
+  renderCartRealtime();
+
   </script>
 </body>
 </html>

@@ -1,0 +1,21 @@
+<!-- firebase.html -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // Replace with your actual Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAoI9MuR9bxjGPEsN6dkRXtgsZQBHE_dyE",
+    authDomain: "pizza-shop-1ae16.firebaseapp.com",
+    projectId: "pizza-shop-1ae16",
+    storageBucket: "pizza-shop-1ae16.firebasestorage.app",
+    messagingSenderId: "304818543883",
+    appId: "1:304818543883:web:0bf176528aecef4483d60e",
+    };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // Make db globally available
+  window.firebaseDb = db;
+</script>
