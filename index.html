@@ -358,25 +358,106 @@
 
   <div id="toast" class="toast hidden"></div>
 
-  <script src="firebase.html"></script>
+  <!-- <script src="firebase.html"></script> -->
+  <!-- <script type="module" src="firebase.html"></script> -->
+   <!-- <script src="firebase.js"></script> -->
+    <script type="module" src="firebase.js"></script>
 
-  <script>
+  <script type="module">
+    
     /******************* UTIL + STORE *******************/
     const $ = (q,el=document)=>el.querySelector(q);
     const $$ = (q,el=document)=>Array.from(el.querySelectorAll(q));
     const uid = ()=> Math.random().toString(36).slice(2,10);
     const fmt = n => `₹${Number(n||0).toFixed(0)}`;
 
-    const store = {
-      read() {
-        const data = localStorage.getItem('pizzahub');
-        if (!data) return this.write(seedData());
-        try { return JSON.parse(data); } 
-        catch(e) { console.error(e); return this.write(seedData()); }
-      },
-      write(data) { localStorage.setItem('pizzahub', JSON.stringify(data)); return data; },
-      patch(mut) { const data = this.read(); mut(data); return this.write(data); }
-    };
+    // ---------- Firestore-backed store (replace the old `store` block) ----------
+const CLIENT_ID = 'client-' + Math.random().toString(36).slice(2,9);
+const APP_DOC_REF = (window.fs && window.db) ? window.fs.doc(window.db, 'app', 'pizzahub') : null;
+
+const store = {
+  _data: null,
+
+  read() {
+    if (this._data) return this._data;
+    const raw = localStorage.getItem('pizzahub');
+    if (!raw) {
+      const seed = seedData();
+      this.write(seed, { sync:false }); // write local only until firestore listener bootstraps
+      return seed;
+    }
+    try {
+      this._data = JSON.parse(raw);
+      return this._data;
+    } catch(e) {
+      console.error('Failed parsing local state, reseeding', e);
+      const seed = seedData();
+      this.write(seed, { sync:false });
+      return seed;
+    }
+  },
+
+  write(data, opts = { sync:true }) {
+    // keep local copy
+    localStorage.setItem('pizzahub', JSON.stringify(data));
+    this._data = data;
+
+    // push to firestore document (full-state overwrite)
+    if (opts.sync && window.fs && APP_DOC_REF) {
+      try {
+        window.fs.setDoc(APP_DOC_REF, { data, _meta: { clientId: CLIENT_ID, ts: Date.now() } })
+          .catch(err => console.error('setDoc error', err));
+      } catch(err) {
+        console.error('Failed to setDoc', err);
+      }
+    }
+    return data;
+  },
+
+  patch(mut, opts = { sync:true }) {
+    const data = this.read();
+    mut(data);
+    return this.write(data, opts);
+  }
+};
+// ---------------------------------------------------------------------------
+function initFirestoreSync() {
+  if (!window.fs || !window.db || !APP_DOC_REF) {
+    console.warn('Firestore not ready yet.');
+    return;
+  }
+
+  // Listen remote -> local
+  window.fs.onSnapshot(APP_DOC_REF, snap => {
+    if (!snap.exists()) {
+      // first time: create remote from local
+      try {
+        window.fs.setDoc(APP_DOC_REF, { data: store.read(), _meta: { clientId: CLIENT_ID, ts: Date.now() } })
+          .catch(e => console.error('setDoc create', e));
+      } catch(e) { console.error(e); }
+      return;
+    }
+
+    const payload = snap.data();
+    const remoteMeta = payload._meta || {};
+    // ignore our own writes (prevents a loop)
+    if (remoteMeta.clientId === CLIENT_ID) return;
+
+    // Accept remote state: write to localStorage (do NOT re-sync back)
+    try {
+      localStorage.setItem('pizzahub', JSON.stringify(payload.data));
+      store._data = payload.data;
+      // Re-render UI with the new state
+      renderAll();
+      restoreStaffSession(); // keep sessions in sync
+    } catch (e) {
+      console.error('Failed applying remote state', e);
+    }
+  }, err => {
+    console.error('Firestore onSnapshot error', err);
+  });
+}
+
 
     function seedData(){
       const b1 = {id:uid(), name:'Central', phone:'080-40004000', addr:'12 MG Road, Bengaluru', items:[], orders:[]};
@@ -559,22 +640,17 @@
       `).join('') || '<div class="muted">No items found.</div>';
     }
 
-    function addToCart(branchId, itemId){
-  const userId = 'unique_user_id';
-  const cartRef = window.firebaseDb.collection('carts').doc(userId);
 
-  cartRef.get().then(doc => {
-    let cart = doc.exists ? doc.data().items : [];
-    const existing = cart.find(c => c.itemId === itemId && c.branchId === branchId);
-    if(existing) {
-      existing.qty++;
-    } else {
-      cart.push({branchId, itemId, qty:1});
-    }
-    cartRef.set({items: cart});
-    toast('Added to cart (Realtime)');
-    renderCartRealtime();
+// ---- Add to cart (now updates store which syncs to Firestore) ----
+function addToCart(branchId, itemId){
+  store.patch(d=>{
+    d.cart = d.cart || [];
+    const existing = d.cart.find(x => x.itemId === itemId && x.branchId === branchId);
+    if (existing) existing.qty++;
+    else d.cart.push({ id: uid(), branchId, itemId, qty: 1 });
   });
+  toast('Added to cart');
+  renderCart();
 }
 
 function renderCustomerOrders(){
@@ -602,62 +678,113 @@ function renderCustomerOrders(){
   }).join('') || '<div class="muted">No orders yet.</div>';
 }
 
-function renderCartRealtime(){
-  const userId = 'unique_user_id';
-  const cartRef = window.firebaseDb.collection('carts').doc(userId);
+// ---- Cart rendering (used by many places) ----
+function renderCart(){
+  const d = store.read();
+  const cart = d.cart || [];
+  let subtotal = 0;
 
-  cartRef.onSnapshot(doc => {
-    const cart = doc.exists ? doc.data().items : [];
-    let subtotal = 0;
-    document.getElementById('cartList').innerHTML = cart.map(c => {
-      subtotal += (c.qty * 100); // Replace with actual item price lookup logic if needed
-      return `
-        <div class="row">
-          <div>Branch: ${c.branchId} | Item: ${c.itemId} | Qty: ${c.qty}</div>
+  const html = cart.map(c => {
+    const br = d.branches.find(b => b.id === c.branchId) || {};
+    const item = (br.items || []).find(i => i.id === c.itemId) || { title: 'Unknown', price: 100 };
+    subtotal += (c.qty * (item.price || 100));
+    return `
+      <div class="row">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div>
+            <div style="font-weight:700">${item.title}</div>
+            <div class="muted" style="font-size:13px">${br.name || '—'}</div>
+          </div>
         </div>
-      `;
-    }).join('') || '<div class="muted">Your cart is empty.</div>';
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn" onclick="chgQty('${c.id}',-1)">−</button>
+          <div style="min-width:24px;text-align:center">${c.qty}</div>
+          <button class="btn" onclick="chgQty('${c.id}',1)">+</button>
+          <button class="btn danger" onclick="rmCart('${c.id}')">Remove</button>
+        </div>
+      </div>
+    `;
+  }).join('') || '<div class="muted">Your cart is empty.</div>';
 
-    document.getElementById('subtotal').textContent = `₹${subtotal}`;
-    document.getElementById('delivery').textContent = `₹${cart.length ? 40 : 0}`;
-    document.getElementById('total').textContent = `₹${subtotal + (cart.length ? 40 : 0)}`;
+  $('#cartList').innerHTML = html;
+  $('#subtotal').textContent = `₹${subtotal}`;
+  $('#delivery').textContent = `₹${cart.length ? 40 : 0}`;
+  $('#total').textContent = `₹${subtotal + (cart.length ? 40 : 0)}`;
+}
+
+    function chgQty(id, delta){
+  store.patch(d=>{
+    const c = (d.cart || []).find(x => x.id === id);
+    if (!c) return;
+    c.qty += delta;
+    if (c.qty <= 0) d.cart = d.cart.filter(x => x.id !== id);
+  });
+  renderCart();
+}
+function rmCart(id){
+  store.patch(d => d.cart = (d.cart || []).filter(x => x.id !== id));
+  renderCart();
+}
+
+
+function subscribeOrders(branchId, callback) {
+  const q = query(collection(db,"orders"), where("branchId","==",branchId));
+  return onSnapshot(q, snap => {
+    const orders = snap.docs.map(d=>({id:d.id,...d.data()}));
+    callback(orders);
   });
 }
 
-    function chgQty(id,delta){
-      store.patch(d=>{
-        const c=d.cart.find(x=>x.id===id); if(!c) return; c.qty += delta; if(c.qty<=0) d.cart = d.cart.filter(x=>x.id!==id);
-      });
-      renderCart();
-    }
-    function rmCart(id){ store.patch(d=> d.cart = d.cart.filter(x=>x.id!==id)); renderCart(); }
+// ---- Place order (moves cart -> myOrders & branch.orders) ----
+function placeOrder(){
+  const d = store.read();
+  const cart = d.cart || [];
+  if (!cart.length) return toast('Cart is empty');
 
-    function placeOrder(){
-  const userId = 'unique_user_id';
-  const ordersRef = window.firebaseDb.collection('orders');
-  const cartRef = window.firebaseDb.collection('carts').doc(userId);
+  const name = $('#custName').value.trim();
+  const phone = $('#custPhone').value.trim();
+  const addr = $('#custAddr').value.trim();
+  const branchId = $('#branchSelectOrder').value;
+  const payment = $('#payment').value;
 
-  cartRef.get().then(doc => {
-    if(!doc.exists || doc.data().items.length === 0) return toast('Cart is empty');
-
-    const order = {
-      id: uid(),
-      ts: Date.now(),
-      name: document.getElementById('custName').value.trim(),
-      phone: document.getElementById('custPhone').value.trim(),
-      addr: document.getElementById('custAddr').value.trim(),
-      items: doc.data().items,
-      total: 40 + doc.data().items.reduce((sum,c)=> sum + (c.qty * 100), 0),
-      status: 'Placed',
-      branchId: document.getElementById('branchSelectOrder').value,
-      payment: document.getElementById('payment').value
-    };
-
-    ordersRef.add(order).then(() => {
-      cartRef.set({items: []});
-      toast('Order placed successfully');
-    });
+  // compute total using branch item prices
+  let itemsForOrder = cart.map(c => {
+    const br = d.branches.find(b => b.id === c.branchId) || {};
+    const item = (br.items || []).find(i => i.id === c.itemId) || { id: c.itemId, title: 'Item', price: 100 };
+    return { item: { id: item.id, title: item.title, price: item.price }, qty: c.qty, branchId: c.branchId };
   });
+
+  const subtotal = itemsForOrder.reduce((s, it) => s + (it.qty * (it.item.price || 100)), 0);
+  const total = subtotal + (cart.length ? 40 : 0);
+
+  const order = {
+    id: uid(),
+    ts: Date.now(),
+    name, phone, addr,
+    items: itemsForOrder,
+    total,
+    status: 'Placed',
+    branchId,
+    payment
+  };
+
+  // persist into app state (myOrders and branch.orders) and clear cart
+  store.patch(x => {
+    x.myOrders = x.myOrders || [];
+    x.myOrders.unshift(order);
+
+    const br = x.branches.find(b => b.id === branchId);
+    if (br) {
+      br.orders = br.orders || [];
+      br.orders.unshift(order);
+    }
+    x.cart = [];
+  });
+
+  toast('Order placed successfully');
+  renderCart();
+  renderAdmin();
+  renderCustomerOrders();
 }
 
     /******************* OWNER *******************/
@@ -971,17 +1098,14 @@ function renderCartRealtime(){
     window.delAdmin = delAdmin;
 
     // boot
-    (function init(){
-      const r=location.hash.replace('#','')||'home';
-      if(!routes.includes(r)) location.hash = '#home';
+   (function init(){
+      const r = location.hash.replace('#','')||'home';
+      if(!routes.includes(r)) location.hash='#home';
       show(r);
+      initFirestoreSync();   // 🔥 must be after firebase.js
       renderAll();
       restoreStaffSession();
     })();
-
-    document.getElementById('placeOrderBtn').addEventListener('click', placeOrder);
-  renderCartRealtime();
-
   </script>
 </body>
 </html>
