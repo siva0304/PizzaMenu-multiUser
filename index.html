@@ -210,6 +210,23 @@
           <input id="staffUser" class="input" placeholder="Username" style="width:160px">
           <input id="staffPass" class="input" placeholder="Password" type="password" style="width:160px">
           <button class="btn primary" id="staffLoginBtn">Login</button>
+          <h3 style="margin-top:0">Create New Account</h3>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <button class="btn" id="staffRegBtn">Register Now</button>
+            <button class="btn ghost hidden" id="closeRegBtn">✕</button>
+          </div>
+          <div id="regFormArea" class="hidden">
+            <div class="grid g-2">
+              <div class="field"><label>Name</label><input id="regName" class="input" placeholder="Full name"></div>
+              <div class="field"><label>Phone</label><input id="regPhone" class="input" placeholder="10-digit phone"></div>
+            </div>
+            <div class="field"><label>Address</label><textarea id="regAddr" class="input" rows="3"></textarea></div>
+            <div class="grid g-2">
+              <div class="field"><label>Username</label><input id="regUser" class="input" placeholder="username"></div>
+              <div class="field"><label>Password</label><input id="regPass" type="password" class="input" placeholder="password"></div>
+            </div>
+            <button class="btn primary" id="createAccountBtn">Create Account</button>
+          </div>
         </div>
         <div id="staffLoggedArea" class="hidden" style="display:flex;gap:8px;align-items:center;margin-top:10px">
           <span class="pill" id="staffWho"></span>
@@ -264,32 +281,6 @@
         <div id="customerOrders" class="list" style="margin-top:10px"></div>
       </div>
     </div>
-
-    <div class="card pad">
-          <h3 style="margin-top:0">Create New Account</h3>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-            <button class="btn" id="toggleRegBtn">Register Now</button>
-            <button class="btn ghost hidden" id="closeRegBtn">✕</button>
-          </div>
-          <div id="regFormArea" class="hidden" style="margin-top:10px">
-            <div class="grid g-2">
-              <div class="field"><label>Name</label><input id="regName" class="input" placeholder="Full name"></div>
-              <div class="field"><label>Phone</label><input id="regPhone" class="input" placeholder="10-digit phone"></div>
-            </div>
-            <div class="field"><label>Address</label><textarea id="regAddr" class="input" rows="3"></textarea></div>
-            <div class="grid g-2">
-              <div class="field"><label>Username</label><input id="regUser" class="input" placeholder="username"></div>
-              <div class="field"><label>Password</label><input id="regPass" type="password" class="input" placeholder="password"></div>
-            </div>
-            <button class="btn primary" id="createAccountBtn">Create Account</button>
-          </div>
-        </div>
-
-      <div id="account" class="section hidden">
-        <div class="card pad">
-          <div id="accountArea" class="hidden" style="margin-top:10px"></div>
-        </div>
-      </div>
     </section>
   </main>
 
@@ -358,10 +349,7 @@
 
   <div id="toast" class="toast hidden"></div>
 
-  <!-- <script src="firebase.html"></script> -->
-  <!-- <script type="module" src="firebase.html"></script> -->
-   <!-- <script src="firebase.js"></script> -->
-    <script type="module" src="firebase.js"></script>
+<script type="module" src="firebase.js"></script>
 
   <script type="module">
     
@@ -1054,18 +1042,26 @@ function placeOrder(){
     $('#placeOrderBtn').addEventListener('click', placeOrder);
     $('#saveAsAccountBtn').addEventListener('click', saveAsAccountFromOrder);
     $('#branchSelectOrder').addEventListener('change', ()=>{});
-    $('#toggleRegBtn').addEventListener('click', () => {
-        const form = $('#regFormArea');
-        const closeBtn = $('#closeRegBtn');
-        form.classList.toggle('hidden');
-        closeBtn.classList.toggle('hidden');
-    });
     $('#closeRegBtn').addEventListener('click', () => {
         const form = $('#regFormArea');
         const closeBtn = $('#closeRegBtn');
         form.classList.add('hidden');
         closeBtn.classList.add('hidden');
     });
+
+   // Register Now beside login → open registration form
+    $('#staffRegBtn').addEventListener('click', () => {
+      const form = $('#regFormArea');
+      const closeBtn = $('#closeRegBtn');
+
+      form.classList.remove('hidden');       // show the registration form
+      closeBtn.classList.remove('hidden');   // show the ✕ close button
+      show('staff');                         // ensure we are on Staff section
+
+      // Smooth scroll to the form so user sees it immediately
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
 
     // Login calls the new unified function
     $('#staffLoginBtn').addEventListener('click', () => login($('#staffUser').value, $('#staffPass').value));
