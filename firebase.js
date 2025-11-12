@@ -9,16 +9,15 @@ import {
   getStorage, ref as storageRef, uploadBytes, getDownloadURL
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
 
-// 🔑 Your Firebase config (from your project)
-const firebaseConfig = {
-  apiKey: "AIzaSyAoI9MuR9bxjGPEsN6dkRXtgsZQBHE_dyE",
-  authDomain: "pizza-shop-1ae16.firebaseapp.com",
-  projectId: "pizza-shop-1ae16",
-  storageBucket: "pizza-shop-1ae16.firebasestorage.app",
-  messagingSenderId: "304818543883",
-  appId: "1:304818543883:web:0bf176528aecef4483d60e",
-  measurementId: "G-HSFWEKM99M"
-};
+// 🔑 Firebase config
+// const firebaseConfig = {
+//   apiKey: "YOUR_API_KEY",
+//   authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+//   projectId: "YOUR_PROJECT_ID",
+//   storageBucket: "YOUR_PROJECT_ID.appspot.com",
+//   messagingSenderId: "YOUR_SENDER_ID",
+//   appId: "YOUR_APP_ID"
+// };
 
 // 🔥 Initialize Firebase
 const app = initializeApp(firebaseConfig);
